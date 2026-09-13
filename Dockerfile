@@ -1,21 +1,17 @@
-# اختيار صورة Node خفيفة
 FROM node:18-alpine
 
-# تحديد المجلد داخل الحاوية
 WORKDIR /app
 
-# نسخ ملفات الاعتماديات أولاً لتحسين الكاش
+# نسخ ملفات package.json (وإن وجد lock)
 COPY package*.json ./
 
-# تثبيت الاعتماديات (بما فيها الإنتاج فقط)
-RUN npm ci --only=production
+# تثبيت الاعتماديات (يدعم وجود أو عدم وجود lock-file)
+RUN npm install --omit=dev
 
-# نسخ باقي ملفات الموقع والمشروع
+# نسخ باقي الملفات
 COPY . .
 
-# منفذ التطبيق (Render يزود المتغير PORT تلقائياً)
 ENV PORT=10000
 EXPOSE 10000
 
-# أمر التشغيل
 CMD ["npm", "start"]
